@@ -13,9 +13,9 @@ class Fish:
 
         self.lake = lake
         self.speed = speed
-        self.x = random.uniform(0, lake.side_length)  # Random initial x-coordinate
-        self.y = random.uniform(0, lake.side_length)  # Random initial y-coordinate
-        self.direction = random.uniform(0, 2 * math.pi)  # Random initial direction in radians
+        self.x = int(random.uniform(0, lake.side_length))
+        self.y = int(random.uniform(0, lake.side_length))
+        self.direction = random.uniform(0, 2 * math.pi) 
 
     def move(self, time_interval):
         speed_x = self.speed * math.cos(self.direction)
@@ -30,7 +30,6 @@ class Fish:
             self.direction = -self.direction  # Reflect direction vertically
             new_y = max(0, min(new_y, self.lake.side_length))
 
-        # Update position
         self.x = new_x
         self.y = new_y
 
@@ -42,23 +41,21 @@ class Fish:
 
 # Example Usage
 if __name__ == "__main__":
-    lake_area = 10000  # Example lake area (A)
-    fish_speed = 9  # Example fish speed (f)
-    time_step = 0.2  # Time interval for updates (in seconds)
-    direction_change_interval = 2.0  # Interval for changing direction (in seconds)
-
-    # Create lake and fish
+    lake_area = 10000
+    fish_speed = 9 
+    time_step = 0.2  # Time interval for updates
+    direction_change_interval = 2.0 
     lake = Lake(lake_area)
     fish = Fish(lake, fish_speed)
 
-    # Simulate fish movement indefinitely
+    #Fish movement
     print("Initial position of the fish:", fish.get_position())
     elapsed_time = 0
     while True:
         fish.move(time_step)
         elapsed_time += time_step
 
-        # Change direction every `direction_change_interval` seconds
+        # Change direction 
         if elapsed_time % direction_change_interval == 0:
             fish.change_direction()
 
