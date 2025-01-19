@@ -4,10 +4,6 @@ import time
 
 class Lake:
     def __init__(self, area):
-        """
-        Initialize the lake with a given area.
-        :param area: Area of the square lake (A).
-        """
         self.area = area
         self.side_length = math.sqrt(area)  # Calculate the side length of the square lake
 
