@@ -13,62 +13,54 @@ class Lake:
 class Boat:
     def __init__(self,lake,speed):
         self.lake = lake
-        self.speed = speed
-        self.x = 0
-        self.y = 0
+        self.pos = [0,0]
         self.direction = math.pi/4
-    
+        self.speed_vector = [(speed * math.cos(self.direction)),(speed * math.sin(self.direction))]
+        self.speed_magnitude = speed
     def move_diagonal(self, time_interval):
-        speed_x = self.speed * math.cos(self.direction)
-        speed_y = self.speed * math.sin(self.direction)
-        new_x = self.x + speed_x * time_interval
-        new_y = self.y + speed_y * time_interval
-        if new_x < 0 or new_x > self.lake.side_length:
+        new_pos = [(self.pos[0] + self.speed_vector[0] * time_interval),(self.pos[1] + self.speed_vector[1] * time_interval)]
+        if new_pos[0] < 0 or new_pos[1] > self.lake.side_length:
             self.direction = math.pi - self.direction  # Reflect direction horizontally
-            new_x = max(0, min(new_x, self.lake.side_length))
-        if new_y < 0 or new_y > self.lake.side_length:
+            self.speed_vector = [(self.speed_magnitude * math.cos(self.direction)),(self.speed_magnitude * math.sin(self.direction))]
+            new_pos[0] = max(0, min(new_pos[0], self.lake.side_length))
+        if new_pos[1] < 0 or new_pos[1] > self.lake.side_length:
             self.direction = -self.direction  # Reflect direction vertically
-            new_y = max(0, min(new_y, self.lake.side_length))
-        self.x = new_x
-        self.y = new_y
+            self.speed_vector = [(self.speed_magnitude * math.cos(self.direction)),(self.speed_magnitude * math.sin(self.direction))]
+            new_pos[1] = max(0, min(new_pos[1], self.lake.side_length))
+        self.pos[0] = new_pos[0]
+        self.pos[1] = new_pos[1]
     
     def get_position(self):
-        return [round(self.x), round(self.y)]
-
-
+        return self.pos
 
 class Fish:
     def __init__(self, lake, speed):
-
         self.lake = lake
-        self.speed = speed
-        self.x = int(random.uniform(0, lake.side_length))
-        self.y = int(random.uniform(0, lake.side_length))
+        self.pos = [int(random.uniform(0, lake.side_length)),int(random.uniform(0, lake.side_length))]
         self.direction = random.uniform(0, 2 * math.pi) 
-
+        self.speed_vector = [(speed * math.cos(self.direction)),(speed * math.sin(self.direction))]
+        self.speed_magnitude = speed
     def move(self, time_interval):
-        speed_x = self.speed * math.cos(self.direction)
-        speed_y = self.speed * math.sin(self.direction)
-        new_x = self.x + speed_x * time_interval
-        new_y = self.y + speed_y * time_interval
-        if new_x < 0 or new_x > self.lake.side_length:
+        new_pos = [(self.pos[0] + self.speed_vector[0] * time_interval),(self.pos[1] + self.speed_vector[1] * time_interval)]
+        if new_pos[0] < 0 or new_pos[0] > self.lake.side_length:
             self.direction = math.pi - self.direction  # Reflect direction horizontally
-            new_x = max(0, min(new_x, self.lake.side_length))
+            self.speed_vector = [(self.speed_magnitude * math.cos(self.direction)),(self.speed_magnitude * math.sin(self.direction))]
+            new_pos[0] = max(0, min(new_pos[0], self.lake.side_length))
 
-        if new_y < 0 or new_y > self.lake.side_length:
+        if new_pos[1]< 0 or new_pos[1] > self.lake.side_length:
             self.direction = -self.direction  # Reflect direction vertically
-            new_y = max(0, min(new_y, self.lake.side_length))
-
-        self.x = new_x
-        self.y = new_y
+            self.speed_vector = [(self.speed_magnitude * math.cos(self.direction)),(self.speed_magnitude * math.sin(self.direction))]
+            new_pos[1] = max(0, min(new_pos[1], self.lake.side_length))
+        self.pos[0] = new_pos[0]
+        self.pos[1] = new_pos[1]
 
     def change_direction(self):
         self.direction = random.uniform(0, 2 * math.pi)
-
+        print(f"New Direction: {self.direction}")
+        self.speed_vector = [(self.speed_magnitude * math.cos(self.direction)),(self.speed_magnitude * math.sin(self.direction))]
     def get_position(self):
-        return [round(self.x), round(self.y)]
+        return self.pos
 
-# Example Usage
 if __name__ == "__main__":
     def visualize_movement(lake, fish, boat, time_step, direction_change_interval):
         fig, ax = plt.subplots()
@@ -83,29 +75,31 @@ if __name__ == "__main__":
         ax.legend()
 
         elapsed_time = 0
-
+        change_time = 0
         def update(frame):
+            fish_pos = fish.get_position()
+            boat_pos = boat.get_position()
             nonlocal elapsed_time
+            nonlocal change_time
+            change_time += time_step
             elapsed_time += time_step
-            print(f"Frame {frame}, Time {elapsed_time:.1f}s, Fish at {fish.get_position()}, Boat at {boat.get_position()}")
-
+            print(f"Frame {frame}, Time {elapsed_time:.1f}s, Fish at {fish_pos}, Boat at {boat_pos}")
     # Move fish and boat
-            fish.move(time_step)
             boat.move_diagonal(time_step)
-
     # Change fish direction at intervals
-            if elapsed_time % direction_change_interval == 0:
+            if change_time >= direction_change_interval:
                 fish.change_direction()
+                change_time = 0
                 print("Fish changed direction")
-
+            fish.move(time_step)
     # Update positions
-            fish_marker.set_data([fish.x], [fish.y])
-            boat_marker.set_data([boat.x], [boat.y])
+            fish_marker.set_data([fish_pos[0]], [fish_pos[1]])
+            boat_marker.set_data([boat_pos[0]], [boat_pos[1]])
 
     # Stop if they meet
-            if round(fish.x) == round(boat.x) and round(fish.y) == round(boat.y):
+            if math.sqrt((fish_pos[0] - boat_pos[0])**2) + ((fish_pos[1] - boat_pos[1])**2)<= 2 :
                 ani.event_source.stop()
-                print(f"Fish met boat at position {fish.get_position()} at time {elapsed_time:.1f} seconds.")
+                print(f"Fish met boat at position {fish_pos[0]}','{fish_pos[1]} at time {elapsed_time:.1f} seconds.")
 
             return fish_marker, boat_marker
         ani = animation.FuncAnimation(fig, update, frames=200, interval=time_step * 1000, blit=False)
@@ -117,7 +111,7 @@ if __name__ == "__main__":
     lake = Lake(lake_area)
     fish = Fish(lake, fish_speed)
     boat = Boat(lake, boat_speed)
-    time_step = 0.2
-    direction_change_interval = 2.0
+    time_step = 0.1
+    direction_change_interval = 0.8
     visualize_movement(lake, fish, boat, time_step, direction_change_interval)
     
