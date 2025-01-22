@@ -112,14 +112,12 @@ if __name__ == "__main__":
             boat_pos = boat.get_position()
             elapsed_time += time_step
             change_time += time_step
-
         # Move boat and fish
             boat.move_diagonal(time_step)
             fish.move(time_step)
             if change_time >= direction_change_interval:
                 fish.change_direction()
                 change_time = 0         # Change fish direction at intervals
-
             if math.sqrt((fish_pos[0] - boat_pos[0]) ** 2 + (fish_pos[1] - boat_pos[1]) ** 2) <= 2:
                 print(f"Fish met boat at position {fish_pos} when boat was at {boat_pos} at time {elapsed_time:.1f} seconds.")
                 break # Check if they meet and end this sample
