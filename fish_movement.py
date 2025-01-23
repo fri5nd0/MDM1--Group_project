@@ -125,13 +125,14 @@ if __name__ == "__main__":
         boat.set_position()
         return elapsed_time
     
-    def get_samples(change_var):
+
+    def get_samples(change_var):    #YOU CAN PLAY AROUND WITH THIS PART OF THE CODE 
         average_times = []
         change_var_list = []
         ranges = {
             'a': range(20, 1001, 20),  # Lake Area
-            'f': range(1, 31),         # Fish Speed
-            'b': range(1, 31)          # Boat Speed
+            'f': range(1, 50),         # Fish Speed (the third number is the step. We can play around with it)
+            'b': range(1, 200)          # Boat Speed
         }#defined ranges for all samples
         for value in ranges[change_var]:
             lake_area = 1000 #default values
@@ -166,7 +167,7 @@ if __name__ == "__main__":
         average_times = []
         if change_var == 'a':
             data_points = get_samples(change_var)
-            change_var = 'Lake Area'
+            change_var = 'Lake area'
         elif change_var == 'f':
             data_points = get_samples(change_var)
             change_var = 'Fish speed'
@@ -175,13 +176,13 @@ if __name__ == "__main__":
             change_var = 'Boat speed'
         areas = []
         #Graph plottin
-        plt.figure(figsize=(12, 8))
+        plt.figure(figsize=(10, 6))
         plt.plot(data_points[1], data_points[0], marker='o', linestyle='-', color='b', label='Average time')
         plt.xlabel(f'{change_var}', fontsize=14)
         plt.ylabel('Average Time to meet (seconds)', fontsize=14)
         plt.title(f'Average Time to meet v {change_var}', fontsize=16)
         plt.grid(True)
-        plt.legend(fontsize=12)
+        plt.legend(fontsize=8)
         plt.tight_layout()
         plt.show()
         
