@@ -313,12 +313,15 @@ if __name__ == "__main__":
         areas = []
         #Graph plottin
         plt.figure(figsize=(10, 6))
-        plt.scatter(data_points[1], data_points[0], color='b', marker='x', label='Average time')
+        log_data = [math.log(x) for x in data_points[0]]
+        log_data_x = [math.log(x) for x in data_points[1]]
+        plt.scatter(log_data_x,log_data,color='b', marker='x', label='Average time')
         plt.xlabel(f'{change_var}', fontsize=14)
         plt.ylabel('Average Time to meet (seconds)', fontsize=14)
         print(np.corrcoef(data_points[1],data_points[0])[0,1])
         m,b = np.polyfit(data_points[1],data_points[0],1)
         print('regression line: ', m,'x','+',b)
+
         plt.title(f'Average Time to meet v {change_var}', fontsize=16)
         plt.grid(True)
         plt.legend(fontsize=8)
